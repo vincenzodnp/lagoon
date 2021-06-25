@@ -2,6 +2,10 @@
   block:
     - include: refresh-token.yaml
     - name: "{{ testname }} - POST api deployEnvironmentBranch with target git branch {{ branch }} and project {{ project }} (no sha) to {{ graphql_url }}"
+      debug:
+        msg: |
+          token: {{ token }}
+    - name: "{{ testname }} - POST api deployEnvironmentBranch with target git branch {{ branch }} and project {{ project }} (no sha) to {{ graphql_url }}"
       uri:
         url: "{{ graphql_url }}"
         method: POST
@@ -14,7 +18,10 @@
       register: apiresponse
     - name: "{{ testname }} - POST api deployEnvironmentBranch with target git branch {{ branch }} and project {{ project }} (no sha) to {{ graphql_url }}"
       debug:
-        msg: "api response: {{ apiresponse.json }}"
+        msg: |
+          query: {{ lookup("template", "./deploy-no-sha.gql") }}
+          token: {{ token }}
+          api response: {{ apiresponse.json }}
       until: apiresponse.json.data.deployEnvironmentBranch == "success"
       retries: 10
       delay: 30
