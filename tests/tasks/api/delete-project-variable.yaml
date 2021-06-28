@@ -10,12 +10,6 @@
         body_format: json
         body: '{ "query": "query($project: String!) {projectByName(name:$project){id,name,envVariables{id,name}}}", "variables": {"project":"{{ project }}"}}'
       register: apiresponse
-    - name: "{{ testname }} - POST api get project by name with target project {{ project }} and sha {{ sha }} to {{ graphql_url }}"
-      debug:
-        msg: "api response: {{ apiresponse.json }}"
-    - name: "{{ testname }} - POST api get project by name with target project {{ project }} and sha {{ sha }} to {{ graphql_url }}"
-      debug:
-        msg: "api response: {{ apiresponse.json | community.general.json_query(query) }}"
       vars:
         query: 'data.projectByName.envVariables[?name==`{{ envName }}`].id | [0]'
     - name: "{{ testname }} - set envvar id to fact"
@@ -33,8 +27,4 @@
         body:
           query: '{{ lookup("template", "./delete-variable.gql") }}'
       register: apiresponse
-      when: env_var_id != ""
-    - name: "{{ testname }} - POST api delete envVariable with target project {{ project }} to {{ graphql_url }}"
-      debug:
-        msg: "api response: {{ apiresponse.json }}"
       when: env_var_id != ""

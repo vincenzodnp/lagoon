@@ -8,5 +8,3 @@
   until:  response.json is defined and response.json.number_of_nodes is defined and response.json.number_of_nodes == node_count
   retries: 90
   delay: 20
-- name: "{{ testname }} - Check if URL {{ url }} contains json {{ expected_key }}:{{ expected_value }}"
-  debug: msg="Success!!!"

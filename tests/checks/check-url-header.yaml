@@ -13,8 +13,3 @@
   failed_when: result[expected_header] != expected_header_value
   retries: 90
   delay: 20
-
-- name: >-
-    {{ testname }} - Check if URL {{ url }} returns with Header set to
-    {{ expected_header }} with value of '{{ expected_header_value }}'
-  debug: msg="Success!!!"

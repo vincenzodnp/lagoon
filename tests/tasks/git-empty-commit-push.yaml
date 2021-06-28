@@ -27,6 +27,3 @@
 
 - set_fact:
     current_head: "{{ result.stdout }}"
-
-- debug:
-    msg: "{{ testname }} - current head git hash: {{ current_head }}"
