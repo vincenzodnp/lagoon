@@ -10,7 +10,6 @@
         body_format: json
         body: '{ "query": "mutation($projectName: String!) {switchActiveStandby(input:{project:{name:$projectName}}){id}}", "variables": {"projectName":"{{ project }}"}}'
       register: apiresponse
-      until:
     - name: "{{ testname }} - POST api taskById with ID {{ apiresponse.json.data.switchActiveStandby.id }} for migration status to {{ graphql_url }}"
       uri:
         url: "{{ graphql_url }}"
