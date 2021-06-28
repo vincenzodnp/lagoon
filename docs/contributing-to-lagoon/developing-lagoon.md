@@ -23,13 +23,11 @@ e.g. ` "insecure-registries" : ["172.16.0.0/12","192.168.0.0/16"],`
 
 Running a Lagoon, Kubernetes or Docker Cluster on your local machine consumes a lot of resources. We recommend that you give your Docker host a minimum of 8 CPU cores and 12GB RAM.
 
-## Building Lagoon Locally
+## Building and Running Lagoon Locally
 
-{% hint style="warning" %}
-Only consider building Lagoon this way if you intend to develop features or functionality for it, or want to debug internal processes. We will also be providing instruction to install Lagoon without building it (i.e. by using the published releases).
+| :warning: | Only consider building Lagoon this way if you intend to develop features or functionality for it, or want to debug internal processes. We will also be providing instruction to install Lagoon without building it (i.e. by using the published releases). |
 
-We're using `make` \(see the [Makefile](https://github.com/uselagoon/lagoon/blob/main/Makefile)\) in order to build the needed Docker images, configure Kubernetes and run tests
-{% endhint %}
+| :info: | We're using `make` \(see the [Makefile](https://github.com/uselagoon/lagoon/blob/main/Makefile)\) in order to build the needed Docker images, configure Kubernetes and run tests. |
 
 We have provided a number of routines in the [Makefile](https://github.com/uselagoon/lagoon/blob/main/Makefile) to cover most local development scenarios. Here we will run through a complete process.
 
