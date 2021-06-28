@@ -24,5 +24,3 @@
         body:
           query: '{{ lookup("template", "./add-variable.gql") }}'
       register: apiresponse
-    - name: "{{ testname }} - POST api add envVariable with target project {{ project }} to {{ graphql_url }}"
-

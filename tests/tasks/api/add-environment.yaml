@@ -23,6 +23,3 @@
         body:
           query: '{{ lookup("template", "./add-environment.gql") }}'
       register: apiresponse
-    - name: "Add environment {{ name }} to project {{ project }}"
-      retries: 10
-      delay: 30
