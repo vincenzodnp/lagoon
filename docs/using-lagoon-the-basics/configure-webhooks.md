@@ -4,7 +4,7 @@ Your Lagoon administrator will also give you the route to the `webhook-handler`.
 
 <!-- markdown-link-check-disable -->
 ???+ Info "Info for amazee.io customers"
-    If you are an amazee.io customer, the route to the webhook-handler is: [`https://hooks.lagoon.amazeeio.cloud`](https://hooks.lagoon.amazeeio.cloud).
+    If you are an {{ customer.name }} customer, the route to the webhook-handler is: [`https://{{ customer.web }}`](https://{{ customer.web}}).
     <!-- markdown-link-check-enable -->
 
 !!! danger
