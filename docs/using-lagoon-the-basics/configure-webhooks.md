@@ -3,7 +3,7 @@
 Your Lagoon administrator will also give you the route to the `webhook-handler`. You will add this to your repository as an outgoing webhook, and choose which events to send to Lagoon. Typically, you will send all push and pull request events. In Lagoon it is possible to add a regular expression to determine which branches and pull requests actually result in a deploy, and your Lagoon administrator can set that up for you. For example, all branches that start with `feature-` could be deployed to Lagoon.
 
 <!-- markdown-link-check-disable -->
-???+ Info "Info for amazee.io customers"
+???+ Info "Info for {{ customer.name }} customers"
     If you are an {{ customer.name }} customer, the route to the webhook-handler is: [`https://{{ customer.web }}`](https://{{ customer.web }}).
     <!-- markdown-link-check-enable -->
 
