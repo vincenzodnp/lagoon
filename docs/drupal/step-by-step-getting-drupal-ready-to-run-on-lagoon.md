@@ -36,8 +36,8 @@ Don't forget to customize the values in `lagoon-project` & `LAGOON_ROUTE` with y
 x-environment:
   &default-environment
     LAGOON_PROJECT: *lagoon-project
-    # Route that should be used locally. If you are using pygmy, this route *must* end with .docker.amazee.io.
-    LAGOON_ROUTE: http://drupal-example.docker.amazee.io
+    # Route that should be used locally. If you are using pygmy, this route *must* resolve to localhost (127.0.0.1).
+    LAGOON_ROUTE: http://drupal-example.{{ example.domain }}
 ```
 
 ## 3. Build Images
