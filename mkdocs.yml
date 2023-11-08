@@ -218,6 +218,7 @@ markdown_extensions:
 
 plugins:
   - search
+  - markdownextradata
   - redirects:
       redirect_maps:
         'lagoon/README.md': 'README.md'
