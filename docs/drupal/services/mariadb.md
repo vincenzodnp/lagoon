@@ -63,11 +63,11 @@ To set a static port, edit your service definition in your `docker-compose.yml`.
 ### Connect to MySQL
 
 Now you can use these details to connect to whatever database management tool you'd like.
-Change `{{ example.domain }}` to the domain resolving localhost (127.0.0.1)
+Change `docker.amazee.io` to the domain resolving localhost (127.0.0.1)
 
 |  | Linux | OS X |
 | :--- | :--- | :--- |
-| IP/Host | IP from container | `{{ example.domain }}` |
+| IP/Host | IP from container | `docker.amazee.io` |
 | Port | Published port from container | Published port from container |
 | Username | `drupal` | `drupal` |
 | Password | `drupal` | `drupal` |
