@@ -62,8 +62,8 @@ Connecting is straightforward and follows the following pattern:
 ssh -p [PORT] -t [PROJECT-ENVIRONMENT-NAME]@[HOST]
 ```
 
-* `PORT` - The remote shell SSH endpoint port (for amazee.io: `32222`).
-* `HOST` - The remote shell SSH endpoint host (for amazee.io `ssh.lagoon.amazeeio.cloud`).
+* `PORT` - The remote shell SSH endpoint port (for example: `{{ ssh.port }}`).
+* `HOST` - The remote shell SSH endpoint host (for example `{{ ssh.hostname }}`).
 * `PROJECT-ENVIRONMENT-NAME` - The environment you want to connect to. This is most commonly in the pattern `PROJECTNAME-ENVIRONMENT`.
 
 As an example:

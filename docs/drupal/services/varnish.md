@@ -89,17 +89,17 @@ To test Varnish locally, change the following in `docker-compose.yml`:
 
 Now you should be able to test Varnish!
 <!-- markdown-link-check-disable -->
-Here is a short example assuming there is a node with the ID `1` and has the URL `drupal-example.docker.amazee.io/node/1`
+Here is a short example assuming there is a node with the ID `1` and has the URL `drupal-example.{{ example.domain }}/node/1`
 
-1. Run `curl -I drupal-example.docker.amazee.io/node/1` and look for these headers:
+1. Run `curl -I drupal-example.{{ example.domain }}/node/1` and look for these headers:
    * `X-LAGOON` should include `varnish` which tells you that the request actually went through Varnish.
    * `Age:` will be still `0` as Varnish has probably never seen this site before,  and the first request will warm the varnish cache.
    * `X-Varnish-Cache` will be `MISS` , also telling you that Varnish didn't find a previously cached version of this request.
-2. Now run `curl -I drupal-example.docker.amazee.io/node/1` again, and the headers should be:
+2. Now run `curl -I drupal-example.{{ example.domain }}/node/1` again, and the headers should be:
    * `Age:` will show you how many seconds ago the request has been cached. In our example it will probably something between 1-30, depending on how fast you are executing the command.
    * `X-Varnish-Cache` will be `HIT`, telling you that Varnish successfully found a cached version of the request and returned that one to you.
 3. Change some content at `node/1` in Drupal.
-4. Run `curl -I drupal-example.docker.amazee.io/node/1` , and the headers should the same as very first request:
+4. Run `curl -I drupal-example.{{ example.domain }}/node/1` , and the headers should the same as very first request:
    * `Age:0`
    * `X-Varnish-Cache: MISS`
 <!-- markdown-link-check-enable -->
@@ -126,7 +126,7 @@ Our Varnish configurations have full support for `Ban Lurker`. Ban Lurker helps 
 Varnish doesn't cache? Or something else not working? Here a couple of ways to debug:
 <!-- markdown-link-check-disable -->
 * Run `drush p-debug-en` to enable debug logging of the purge module. This should show you debugging in the Drupal log under `admin/reports/dblog`.
-* Make sure that Drupal sends proper cache headers. To best test this, use the URL that Lagoon generates for bypassing the Varnish cache, \(locally in our Drupal example this is [http://nginx-drupal-example.docker.amazee.io](http://nginx-drupal-example.docker.amazee.io)\). Check for the `Cache-Control: max-age=900, public` header, where the `900` is what you configured in `$config['system.performance']['cache']['page']['max_age']`.
+* Make sure that Drupal sends proper cache headers. To best test this, use the URL that Lagoon generates for bypassing the Varnish cache, \(locally in our Drupal example this is [http://nginx-drupal-example.{{ example.domain }}](http://nginx-drupal-example.{{ example.domain }})\). Check for the `Cache-Control: max-age=900, public` header, where the `900` is what you configured in `$config['system.performance']['cache']['page']['max_age']`.
 * Make sure that the environment variable `VARNISH_BYPASS` is **not** set to `true` \(see `docker-compose.yml` and run `docker-compose up -d varnish` to make sure the environment variable is configured correctly\).
 * If all fails, and before you flip your table \(╯°□°）╯︵ ┻━┻, talk to the Lagoon team, we're happy to help.
 <!-- markdown-link-check-enable -->
