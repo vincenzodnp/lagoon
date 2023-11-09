@@ -37,7 +37,7 @@ x-environment:
   &default-environment
     LAGOON_PROJECT: *lagoon-project
     # Route that should be used locally. If you are using pygmy, this route *must* resolve to localhost (127.0.0.1).
-    LAGOON_ROUTE: http://drupal-example.{{ example.domain }}
+    LAGOON_ROUTE: http://drupal-example.lagoon.sh
 ```
 
 ## 3. Build Images
@@ -76,7 +76,7 @@ This might sound weird, as there was already a `composer install` executed durin
 * In order to be able to edit files on the host and have them immediately available in the container, the default `docker-composer.yml` mounts the whole folder into the the containers \(this happens with `.:/app:delegated` in the volumes section\). This also means that all dependencies installed during the Docker build are overwritten with the files on the host.
 * Locally, you probably want dependencies defined as `require-dev` in `composer.json` to exist as well, while on a production deployment they would just use unnecessary space. So we run `composer install --no-dev` in the Dockerfile and `composer install` manually.
 
-If everything went well, open the `LAGOON_ROUTE` defined in `docker-compose.yml` \(for example `http://drupal.{{ example.domain }}`\) and you should be greeted by a nice Drupal error. Don't worry - that's ok right now, most important is that it tries to load a Drupal site.
+If everything went well, open the `LAGOON_ROUTE` defined in `docker-compose.yml` \(for example `http://drupal.lagoon.sh`\) and you should be greeted by a nice Drupal error. Don't worry - that's ok right now, most important is that it tries to load a Drupal site.
 
 If you get a 500 or similar error, make sure everything loaded properly with Composer.
 
@@ -95,7 +95,7 @@ This should return something like:
 [drupal-example]cli-drupal:/app$ drush status
 [notice] Missing database table: key_value
 Drupal version       :  8.6.1
-Site URI             :  http://drupal.{{ example.domain }}
+Site URI             :  http://drupal.lagoon.sh
 Database driver      :  mysql
 Database hostname    :  mariadb
 Database port        :  3306
