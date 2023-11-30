@@ -19,13 +19,13 @@ git push
 
 This will trigger a push, and the Git hosting will inform Lagoon about this push via the configured webhook.
 
-If all is correct, you will see a notification in your configured chat system \(this is configured by your friendly Lagoon administrator\):
+If all is correct, you will see a notification in your configured chat system \(Contact {{ defaults.helpstring }} for this\):
 
 ![Slack notification of a deployment starting.](./first_deployment_slack_start.jpg)
 
 This tells you that Lagoon has just started to deploy your code. Depending on the size of the codebase and amount of containers, this will take a couple of seconds. Just relax. If you'd like to know what's happening now, check out the [Build and Deploy Process of Lagoon](../using-lagoon-the-basics/build-and-deploy-process.md).
 
-You can also check your Lagoon UI to see the progress of any deployment \(your Lagoon administrator has the info\).
+You can also check your Lagoon UI to see the progress of any deployment \(Contact {{ defaults.helpstring }} for this\).
 
 ## 3. A fail
 
@@ -141,4 +141,4 @@ That's the beauty of Lagoon: it's exactly the same: Push the branch name you def
 Did the deployment fail? Oh no! But we're here to help:
 
 1. Click on the `logs` link in the error notification. It will tell you where in the deployment process the failure happened.
-2. If you can't figure it out, ask your Lagoon administrator, they are here to help!
+2. If you can't figure it out, contact {{ defaults.helpstring }}, they are here to help!
