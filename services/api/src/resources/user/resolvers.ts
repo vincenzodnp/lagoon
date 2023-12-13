@@ -2,7 +2,6 @@
 import * as R from 'ramda';
 import { ResolverFn } from '../';
 import { query, isPatchEmpty } from '../../util/db';
-import { logger } from '../../loggers/logger';
 import { Helpers as organizationHelpers } from '../organization/helpers';
 import { Sql } from './sql';
 
@@ -112,11 +111,21 @@ export const getAllUsers: ResolverFn = async (
 export const getUserByEmail: ResolverFn = async (
   _root,
   { email },
-  { sqlClientPool, models, hasPermission },
+  { sqlClientPool, models, hasPermission, keycloakGrant },
 ) => {
-  await hasPermission('user', 'viewAll');
 
   const user = await models.UserModel.loadUserByUsername(email);
+  if (keycloakGrant) {
+    if (keycloakGrant.access_token.content.sub == user.id) {
+      await hasPermission('ssh_key', 'view:user', {
+        users: [user.id]
+      });
+    } else {
+      await hasPermission('user', 'viewAll');
+    }
+  } else {
+    await hasPermission('user', 'viewAll');
+  }
 
   return user;
 };
@@ -233,9 +242,15 @@ export const addUserToOrganization: ResolverFn = async (
     owner: false,
   }
   if (owner) {
+    await hasPermission('organization', 'addOwner', {
+      organization: organization
+    });
     updateUser.owner = true
+  } else {
+    await hasPermission('organization', 'addViewer', {
+      organization: organization
+    });
   }
-  await hasPermission('organization', 'addViewer')
   await models.UserModel.updateUser(updateUser);
 
   userActivityLogger(`User added a user to organization '${organizationData.name}'`, {
@@ -272,7 +287,9 @@ export const removeUserFromOrganization: ResolverFn = async (
     username: R.prop('email', userInput),
   });
 
-  await hasPermission('organization', 'addOwner');
+  await hasPermission('organization', 'addOwner', {
+    organization: organization
+  });
 
   await models.UserModel.updateUser({
     id: user.id,

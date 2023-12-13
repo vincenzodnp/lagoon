@@ -1,12 +1,12 @@
 # FAQ
 
-## How do I contact my Lagoon administrator?
-
-You should have a private Slack channel that was set up for you to communicate - if not, or you've forgotten how to contact us, reach out at [support@amazee.io](mailto:support@amazee.io).
-
 ## I found a bug! 🐞
 
-If you've found a bug or security issue, please send your findings to [support@amazee.io](mailto:support@amazee.io). Please DO NOT file a GitHub issue for them.
+If you've found a bug, please raise a GitHub issue for it, or contact {{ defaults.helpstring }}.
+
+## I found a security issue! 🐞
+
+If you've found a security issue, please send your findings to [security@amazee.io](mailto:security@amazee.io). Please DO NOT file a GitHub issue for it.
 
 ## I'm interested in amazee.io's hosting services with Lagoon
 
@@ -85,7 +85,7 @@ This typically indicates an issue with Pygmy. You can find our troubleshooting d
 
 ## How do I remove a route?
 
-You will need to contact your helpful Lagoon administrator should you need to remove a route. You can use the Slack channel that was set up for you to communicate - if not, you can always reach us at support@amazee.io or on [Discord](https://discord.gg/te5hHe95JE).
+You will need to contact {{ defaults.helpstring }} should you need to remove a route.
 
 ## When I run `pygmy status`, no keys are loaded
 
@@ -173,4 +173,4 @@ We suggest only exposing web services \(NGINX/Varnish/Node.js\) in your deployed
 
 ## I have a question that isn't answered here
 
-You can reach out to the team via [Discord](https://discord.gg/te5hHe95JE) or email at [uselagoon@amazee.io](mailto:uselagoon@amazee.io).
+You should contact {{ defaults.helpstring }} for any hosting-related enquiries, but you can also reach out to the Lagoon team via [Discord](https://discord.gg/te5hHe95JE) or email at [uselagoon@amazee.io](mailto:uselagoon@amazee.io).

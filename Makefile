@@ -50,7 +50,7 @@ UPSTREAM_TAG ?= latest
 # BUILD_DEPLOY_IMAGE_TAG is the docker tag from uselagoon/build-deploy-image to use -
 # latest is the most current release
 # edge is the most current merged change
-BUILD_DEPLOY_IMAGE_TAG ?= latest
+BUILD_DEPLOY_IMAGE_TAG ?= edge
 
 # To build k3d with Calico instead of Flannel, set this to true. Note that the Calico install in lagoon-charts is always
 # disabled for use with k3d, as the cluster needs it on creation.
@@ -71,6 +71,9 @@ PUBLISH_PLATFORM_ARCH := linux/amd64,linux/arm64
 # Skip image scanning by default to make building images substantially faster
 SCAN_IMAGES := false
 
+# Clear all data from the API on a retest run, usually to clear up after a failure. Set false to preserve
+CLEAR_API_DATA ?= true
+
 # Init the file that is used to hold the image tag cross-reference table
 $(shell >build.txt)
 $(shell >scan.txt)
@@ -87,7 +90,7 @@ endif
 
 # Builds a docker image. Expects as arguments: name of the image, location of Dockerfile, path of
 # Docker Build Context
-docker_build = PLATFORMS=$(PLATFORM_ARCH) IMAGE_REPO=$(CI_BUILD_TAG) TAG=latest LAGOON_VERSION=$(LAGOON_VERSION) docker buildx bake -f docker-bake.hcl $(1) --builder $(CI_BUILD_TAG) --load
+docker_build = PLATFORMS=$(PLATFORM_ARCH) IMAGE_REPO=$(CI_BUILD_TAG) UPSTREAM_REPO=$(UPSTREAM_REPO) UPSTREAM_TAG=$(UPSTREAM_TAG) TAG=latest LAGOON_VERSION=$(LAGOON_VERSION) docker buildx bake -f docker-bake.hcl $(1) --builder $(CI_BUILD_TAG) --load
 
 docker_buildx_create = 	docker buildx create --name $(CI_BUILD_TAG) || echo  -e '$(CI_BUILD_TAG) builder already present\n'
 
@@ -253,7 +256,7 @@ wait-for-keycloak:
 	grep -m 1 "Config of Keycloak done." <(docker-compose -p $(CI_BUILD_TAG) --compatibility logs -f keycloak 2>&1)
 
 # Define a list of which Lagoon Services are needed for running any deployment testing
-main-test-services = actions-handler broker logs2notifications api api-db api-redis keycloak keycloak-db ssh auth-server local-git local-api-data-watcher-pusher local-minio local-minio-upload
+main-test-services = actions-handler broker logs2notifications api api-db api-redis keycloak keycloak-db ssh auth-server local-git local-api-data-watcher-pusher local-minio
 
 # List of Lagoon Services needed for webhook endpoint testing
 webhooks-test-services = webhook-handler webhooks2tasks backup-handler
@@ -354,19 +357,19 @@ api-development: build-ui-logs-development
 
 .PHONY: ui-logs-development
 ui-logs-development: build-ui-logs-development
-	IMAGE_REPO=$(CI_BUILD_TAG) docker-compose -p $(CI_BUILD_TAG) --compatibility up -d api api-db actions-handler local-api-data-watcher-pusher ui keycloak keycloak-db broker api-redis logs2notifications local-minio local-minio-upload mailhog
+	IMAGE_REPO=$(CI_BUILD_TAG) docker-compose -p $(CI_BUILD_TAG) --compatibility up -d api api-db actions-handler local-api-data-watcher-pusher ui keycloak keycloak-db broker api-redis logs2notifications local-minio mailhog
 
 ## CI targets
 
-KUBECTL_VERSION := v1.26.6
-HELM_VERSION := v3.12.2
-K3D_VERSION = v5.5.1
+KUBECTL_VERSION := v1.27.3
+HELM_VERSION := v3.13.1
+K3D_VERSION = v5.6.0
 GOJQ_VERSION = v0.12.13
 STERN_VERSION = v2.6.1
-CHART_TESTING_VERSION = v3.9.0
-K3D_IMAGE = docker.io/rancher/k3s:v1.26.6-k3s1
+CHART_TESTING_VERSION = v3.10.1
+K3D_IMAGE = docker.io/rancher/k3s:v1.27.3-k3s1
 TESTS = [nginx,api,features-kubernetes,bulk-deployment,features-kubernetes-2,features-variables,active-standby-kubernetes,tasks,drush,python,gitlab,github,bitbucket,services,workflows]
-CHARTS_TREEISH = organizations
+CHARTS_TREEISH = prerelease/lagoon_v217
 TASK_IMAGES = task-activestandby
 
 # Symlink the installed kubectl client if the correct version is already
@@ -508,7 +511,7 @@ k3d/test: k3d/cluster helm/repos $(addprefix local-dev/,$(K3D_TOOLS)) build
 			--volume "$$(realpath ../kubeconfig.k3d.$(CI_BUILD_TAG)):/root/.kube/config" \
 			--workdir /workdir \
 			"quay.io/helmpack/chart-testing:$(CHART_TESTING_VERSION)" \
-			ct install
+			ct install --helm-extra-args "--timeout 60m"
 
 LOCAL_DEV_SERVICES = api auth-server actions-handler logs2notifications webhook-handler webhooks2tasks
 
@@ -629,13 +632,14 @@ k3d/retest:
 			LAGOON_FEATURE_FLAG_DEFAULT_ISOLATION_NETWORK_POLICY=enabled \
 			USE_CALICO_CNI=false \
 			LAGOON_FEATURE_FLAG_DEFAULT_ROOTLESS_WORKLOAD=enabled \
+			CLEAR_API_DATA=$(CLEAR_API_DATA) \
 		&& docker run --rm --network host --name ct-$(CI_BUILD_TAG) \
 			--volume "$$(pwd)/test-suite-run.ct.yaml:/etc/ct/ct.yaml" \
 			--volume "$$(pwd):/workdir" \
 			--volume "$$(realpath ../kubeconfig.k3d.$(CI_BUILD_TAG)):/root/.kube/config" \
 			--workdir /workdir \
 			"quay.io/helmpack/chart-testing:$(CHART_TESTING_VERSION)" \
-			ct install
+			ct install --helm-extra-args "--timeout 60m"
 
 .PHONY: k3d/clean
 k3d/clean: local-dev/k3d

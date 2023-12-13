@@ -146,7 +146,7 @@ In many cases, Lagoon knows where that persistent storage needs to go. For examp
 * `lagoon.persistent` - The **absolute** path where the persistent storage should be mounted \(the above example uses `/app/web/sites/default/files/` which is where Drupal expects its persistent storage\).
 * `lagoon.persistent.name` - Tells Lagoon to not create a new persistent storage for that service, but instead mounts the persistent storage of another defined service into this service.
 * `lagoon.persistent.size` - The size of persistent storage you require \(Lagoon usually gives you minimum 5G of persistent storage, if you need more, define it here\).
-* `lagoon.persistent.class` - By default Lagoon automatically assigns the right storage class for your service \(like SSDs for MySQL, bulk storage for Nginx, etc.\). If you need to overwrite this, you can do so here. This is highly dependent on the underlying Kubernetes/OpenShift that Lagoon runs on. Ask your Lagoon administrator about this.
+* `lagoon.persistent.class` - By default Lagoon automatically assigns the right storage class for your service \(like SSDs for MySQL, bulk storage for Nginx, etc.\). If you need to overwrite this, you can do so here. This is highly dependent on the underlying Kubernetes/OpenShift that Lagoon runs on. Contact {{ defaults.helpstring }} for this.
 
 ### Auto-generated Routes
 
@@ -212,14 +212,36 @@ By default, Lagoon expects that services from custom templates are rolled out vi
 
 You can also overwrite the rollout for just one specific environment. This is done in [`.lagoon.yml`](lagoon-yml.md#environments-name-rollouts).
 
-## BuildKit and Docker Compose v2
+## Docker Compose v2 compatibility
+
+!!! bug
+    Note that while using older versions of Docker Compose V2 locally, you may experience some known issues - these have been resolved in later releases (v2.17.3 onwards).
+
+The resolution for these errors is usually to update (or [install a later version](https://docs.docker.com/compose/install/) of) the version of Docker Compose you are using, either standalone or by upgrading the version of Docker Desktop you're using.  See the Docker Desktop [release notes](https://docs.docker.com/desktop/release-notes/) for more information
+
+``` shell title="Docker Compose output indicating depends_on error"
+Failed to solve with frontend dockerfile.v0: failed to create LLB definition: pull access denied, repository does not exist or may require authorization
+
+or
+
+Failed to solve: drupal9-base-cli: pull access denied, repository does not exist or may require authorization: server message: insufficient_scope: authorization failed`
+```
+
+* These are resolved in Docker Compose v2.13.0
+* This message means that your build has tried to access a Docker image that hasn't been built yet. As BuildKit builds in parallel, if you have a Docker image that inherits another one (as we do in Drupal with the CLI).
+* You can also use the [target](https://docs.docker.com/compose/compose-file/build/#target) field inside the build to reconfigure as a multi-stage build
+* If you are already running a newer Docker Compose version, this error may be because you're defaulting to using a docker-container build context with buildx. You should make sure that `docker buildx ls` shows the docker builder as default, not a docker-container based one. Check the docs on docker buildx [here](https://docs.docker.com/engine/reference/commandline/buildx_use/)
+
+``` shell title="Docker Compose output indicating volumes_from error"
+no such service: container:amazeeio-ssh-agent
+```
+
+* This is resolved in Docker Compose v2.17.3
+* This message means that the service that provides SSH access into locally running containers runs outside of your Docker Compose stack and is inaccessible.
+* The section can also be removed from your `docker-compose.yml` file if you don't require SSH access from inside your local environment.
+
+## BuildKit and Lagoon
 
 BuildKit is a toolkit for converting source code to build artifacts in an efficient, expressive and repeatable manner.
 
-With the release of Lagoon v2.11.0, Lagoon now provides support for BuildKit-based docker-compose builds. To enable BuildKit for your Project or Environment, add `DOCKER_BUILDKIT=1` as a build-time variable.
-
-!!! bug
-    Note that while using BuildKit locally, you may experience some known issues.
-
-* `Failed to solve with frontend dockerfile.v0: failed to create LLB definition: pull access denied, repository does not exist or may require authorization`: This message means that your build has tried to access a Docker image that hasn't been built yet. As BuildKit builds in parallel, if you have a Docker image that inherits another one (as we do in Drupal with the CLI). You can use the [target](https://docs.docker.com/compose/compose-file/build/#target) field inside the build to reconfigure as a multi-stage build
-* issues with `volumes_from` in Docker Compose v2 - this service (that provides SSH access into locally running containers) has been deprecated by Docker Compose. The section can be removed from your `docker-compose.yml` file if you don't require SSH access from inside your local environment, or can be worked around on a project-by-project basis - see https://github.com/pygmystack/pygmy/issues/333#issuecomment-1274091375 for more information.
+With the release of Lagoon v2.11.0, Lagoon now provides support for more advanced BuildKit-based docker-compose builds. To enable BuildKit for your Project or Environment, add `DOCKER_BUILDKIT=1` as a build-time variable to your Lagoon project or environment.
